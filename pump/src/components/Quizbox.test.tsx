@@ -20,4 +20,11 @@ describe("Quizbox", () => {
 
     expect(screen.getByText(/1\/1 Correct/)).toBeInTheDocument();
   });
+  it("updates score when incorrect answer is selected", () => {
+    render(<Quizbox />);
+    const incorrectChoice = screen.getByTestId("choice-3");
+    fireEvent.click(incorrectChoice);
+
+    expect(screen.getByText(/0\/1 Incorrect/)).toBeInTheDocument();
+  });
 });

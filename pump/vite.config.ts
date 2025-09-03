@@ -7,5 +7,6 @@ export default defineConfig({
   test: {
     globals: true, // <- enable describe/it/expect globally
     environment: "jsdom", // <- needed for DOM testing
+    include: ["src/**/*.{test,spec}.{js,ts,jsx,tsx}"], // make sure your unit test is inside src
   },
 });

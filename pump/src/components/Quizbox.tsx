@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { mockQuestions, type Question } from "../data/mockdata";
-
-type Score = {
-  correct: number;
-  questionsAnswered: number;
-};
+import { type Score, updateScoreOnChoice } from "../utils/quizlogic";
 
 export default function Quizbox() {
   const [questionDeck, setQuestionDeck] = useState<Question[]>(mockQuestions);
@@ -16,17 +12,17 @@ export default function Quizbox() {
     questionsAnswered: 0,
   });
 
-  function handleChoiceSelection(idx: number) {
-    setSelectedChoice(idx);
+  function handleChoiceSelection(selectedChoice: number) {
+    setSelectedChoice(selectedChoice);
     setIsChoiceSelected(true);
-    if (idx === questionDeck[selectedQ].answer) {
-      setScore((prev: Score) => ({ ...prev, correct: prev.correct + 1 }));
-    }
-    setScore((prev: Score) => ({
-      ...prev,
-      questionsAnswered: prev.questionsAnswered + 1,
-    }));
+    const updatedScore = updateScoreOnChoice(
+      selectedChoice,
+      questionDeck[selectedQ].answer,
+      score
+    );
+    setScore(updatedScore);
   }
+
   function handleNextQuestionClick() {
     setIsChoiceSelected(false);
     setSelectedQ((prev) => prev + 1);
@@ -34,7 +30,7 @@ export default function Quizbox() {
 
   return (
     <div className="quiz__container">
-      <h3 className="quiz__score">
+      <h3 className="quiz__score" id="quiz-score">
         {`${score.correct}/${score.questionsAnswered}`}{" "}
         {isChoiceSelected
           ? selectedChoice === questionDeck[selectedQ].answer
@@ -52,6 +48,7 @@ export default function Quizbox() {
           return (
             <button
               key={idx}
+              data-testid={`choice-${idx}`}
               className={`quiz__choice ${
                 isChoiceSelected
                   ? isSelectedChoiceCorrect
